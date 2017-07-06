@@ -44,6 +44,8 @@ head(fig2)
 fig2
 sum(is.na(fig2$delta_pre))
 
+## Use the deviation of body weight from average at the *beginning* of the experiment
+
 # Use real value
 ggplot2::ggplot(
   data = na.omit(subset(fig2, select = c("delta_pre", "survived"))),
@@ -76,3 +78,48 @@ ggplot2::ggplot(
     ggplot2::geom_smooth(method = "glm") +
     ggplot2::scale_x_continuous("Absolute deviation from cage mean body mass") +
     ggplot2::ggtitle("The effect of having a lower or higher pre-mass on survival")
+
+
+fig2_no_outliers <- filter(fig2, abs(delta_pre) < 1.2)
+ggplot2::ggplot(
+  data = na.omit(subset(fig2_no_outliers, select = c("delta_pre", "survived", "history"))),
+  ggplot2::aes(x = abs(delta_pre), y = survived, color = history)
+) + ggplot2::geom_point() +
+    ggplot2::geom_smooth(method = "glm") +
+    ggplot2::scale_x_continuous("Absolute deviation from cage mean body mass") +
+    ggplot2::ggtitle("The effect of having a lower or higher pre-mass on survival,\nwith outliers removed")
+
+## Use the deviation of body weight from average at the *end* of the experiment
+
+# Use real value
+ggplot2::ggplot(
+  data = na.omit(subset(fig2, select = c("delta_post", "survived"))),
+  ggplot2::aes(x = delta_post, y = survived)
+) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm") +
+    ggplot2::scale_x_continuous("Deviation from cage mean body mass (negative if smaller than average)") +
+    ggplot2::ggtitle("The effect of having a lower or higher post-mass on survival")
+
+ggplot2::ggplot(
+  data = na.omit(subset(fig2, select = c("delta_post", "survived", "history"))),
+  ggplot2::aes(x = delta_post, y = survived, color = history)
+) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm") +
+    ggplot2::scale_x_continuous("Deviation from cage mean body mass (negative if smaller than average)") +
+    ggplot2::ggtitle("The effect of having a lower or higher post-mass on survival")
+
+# Use absolute value
+ggplot2::ggplot(
+  data = na.omit(subset(fig2, select = c("delta_post", "survived"))),
+  ggplot2::aes(x = abs(delta_post), y = survived)
+) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm") +
+    ggplot2::scale_x_continuous("Absolute deviation from cage mean body mass") +
+    ggplot2::ggtitle("The effect of having a lower or higher post-mass on survival")
+
+ggplot2::ggplot(
+  data = na.omit(subset(fig2, select = c("delta_post", "survived", "history"))),
+  ggplot2::aes(x = abs(delta_post), y = survived, color = history)
+) + ggplot2::geom_point() +
+    #ggplot2::geom_smooth() +
+    #ggplot2::geom_smooth(method = "lm") +
+    ggplot2::geom_smooth(method = "glm") +
+    ggplot2::scale_x_continuous("Absolute deviation from cage mean body mass") +
+    ggplot2::ggtitle("The effect of having a lower or higher post-mass on survival")
