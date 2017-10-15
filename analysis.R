@@ -2,7 +2,7 @@
 #  - Why use the *absolute* deviation from cage mean body mass, as in figure 2?
 #  - How would it look like if the signed deviation is used?
 rm(list = ls())
-
+setwd("~/GitHubs/Bolnick_and_Stutz_2017")
 traits_filename <- "Bolnick_traits.txt"
 
 if (!file.exists(traits_filename)) {
