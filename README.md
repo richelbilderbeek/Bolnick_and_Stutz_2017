@@ -6,3 +6,4 @@ Notes for Bolnick, Daniel I., and William E. Stutz. "Frequency dependence limits
 
 ![Figure 2, taking the relative body size](fig2_non_absolute.png)
 
+![Pre-mass distribution](pre_mass_distribution.png)

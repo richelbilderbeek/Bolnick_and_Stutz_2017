@@ -64,7 +64,7 @@ Use real value, lumped:
 ggplot2::ggplot(
   data = na.omit(subset(fig2, select = c("delta_pre", "survived"))),
   ggplot2::aes(x = delta_pre, y = survived)
-) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm") +
+) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm", family = "binomial") +
     ggplot2::scale_x_continuous("Deviation from cage mean body mass (negative if smaller than average)") +
     ggplot2::ggtitle("The effect of having a lower or higher pre-mass on survival")
 ```
@@ -75,7 +75,7 @@ Use real value, seperated by history:
 ggplot2::ggplot(
   data = na.omit(subset(fig2, select = c("delta_pre", "survived", "history"))),
   ggplot2::aes(x = delta_pre, y = survived, color = history)
-) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm") +
+) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm", family = "binomial") +
     ggplot2::scale_x_continuous("Deviation from cage mean body mass (negative if smaller than average)") +
     ggplot2::ggtitle("The effect of having a lower or higher pre-mass on survival")
 ```
@@ -86,7 +86,7 @@ Use absolute value, lumped:
 ggplot2::ggplot(
   data = na.omit(subset(fig2, select = c("delta_pre", "survived"))),
   ggplot2::aes(x = abs(delta_pre), y = survived)
-) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm") +
+) + ggplot2::geom_point() + ggplot2::geom_smooth(method = "glm", family = "binomial") +
     ggplot2::scale_x_continuous("Absolute deviation from cage mean body mass") +
     ggplot2::ggtitle("The effect of having a lower or higher pre-mass on survival")
 ```
@@ -100,7 +100,7 @@ ggplot2::ggplot(
 ) + ggplot2::geom_point() +
     #ggplot2::geom_smooth() +
     #ggplot2::geom_smooth(method = "lm") +
-    ggplot2::geom_smooth(method = "glm") +
+    ggplot2::geom_smooth(method = "glm", family = "binomial") +
     ggplot2::scale_x_continuous("Absolute deviation from cage mean body mass") +
     ggplot2::ggtitle("The effect of having a lower or higher pre-mass on survival")
 ```
@@ -113,7 +113,7 @@ ggplot2::ggplot(
   data = na.omit(subset(fig2_no_outliers, select = c("delta_pre", "survived", "history"))),
   ggplot2::aes(x = abs(delta_pre), y = survived, color = history)
 ) + ggplot2::geom_point() +
-    ggplot2::geom_smooth(method = "glm") +
+    ggplot2::geom_smooth(method = "glm", family = "binomial") +
     ggplot2::scale_x_continuous("Absolute deviation from cage mean body mass") +
     ggplot2::ggtitle("The effect of having a lower or higher pre-mass on survival,\nwith outliers removed")
 ```

@@ -11,22 +11,30 @@ if (!file.exists(traits_filename)) {
 }
 
 pre_dat <- read.csv(traits_filename, sep = " ")
+names(pre_dat)
 
 # Start of original code
-cage_mass_sd <- tapply(pre_dat$pre_mass, pre_dat$enclosure, sd, na.rm = T)
-cage_mass_mean <- tapply(pre_dat$pre_mass, pre_dat$enclosure, mean, na.rm = T)
+
+# Calculate the mean and standard deviation of pre_mass per enclosure
+# Original
+# cage_mass_sd <- tapply(pre_dat$pre_mass, pre_dat$enclosure, sd, na.rm = T)
+# cage_mass_mean <- tapply(pre_dat$pre_mass, pre_dat$enclosure, mean, na.rm = T)
+# Modified: there are no NAs to remove here
+cage_mass_sd <- tapply(pre_dat$pre_mass, pre_dat$enclosure, sd)
+cage_mass_mean <- tapply(pre_dat$pre_mass, pre_dat$enclosure, mean)
+
 pre_dat$cage_mass_stdev <- NA
 pre_dat$cage_mass_mean <- NA
 #Fixed
-for(i in 1:nrow(pre_dat)){
-#Original
-#for(i in 1:length(pre_dat$majority)){
-pre_dat$cage_mass_stdev[i] <- cage_mass_sd[names(cage_mass_sd) == pre_dat$enclosure[i]]
-pre_dat$cage_mass_mean[i] <- cage_mass_mean[names(cage_mass_mean) == pre_dat$enclosure[i]]
+for(i in 1:nrow(pre_dat)) {
+  #Original
+  #for(i in 1:length(pre_dat$majority)){
+  pre_dat$cage_mass_stdev[i] <- cage_mass_sd[names(cage_mass_sd) == pre_dat$enclosure[i]]
+  pre_dat$cage_mass_mean[i] <- cage_mass_mean[names(cage_mass_mean) == pre_dat$enclosure[i]]
 }
 
-pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass -
-pre_dat$cage_mass_mean)/pre_dat$cage_mass_stdev
+# Take the absolution normalized deviation
+pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_mean)/pre_dat$cage_mass_stdev
 
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "absolute deviation from cage mean body mass",cex.lab = 1.5)
@@ -78,7 +86,9 @@ pre_dat$cage_mass_mean[i] <- cage_mass_mean[names(cage_mass_mean) == pre_dat$enc
 # Original with abs
 # pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_mean)/pre_dat$cage_mass_stdev
 # New without abs
-pre_dat$cage_mass_mean_deviation_sd <- pre_dat$pre_mass - pre_dat$cage_mass_mean /pre_dat$cage_mass_stdev
+pre_dat$cage_mass_mean_deviation_sd <- (pre_dat$pre_mass - pre_dat$cage_mass_mean) / pre_dat$cage_mass_stdev
+
+testthat::expect_equivalent(mean(pre_dat$cage_mass_mean_deviation_sd, na.rm = TRUE), 0.0)
 
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "deviation from cage mean body mass",cex.lab = 1.5)
@@ -111,3 +121,31 @@ text(1,0.18, "P = 0.502", col = "blue", cex = 1.2)
 text(1,0.65, "P = 0.048", col = "blue", cex = 1.2)
 text(1,0.84, "P = 0.101", col = "dark green", cex = 1.2)
 text(1,0.9, "P = 0.073", col = "darkgreen", cex = 1.2)
+
+
+ggplot2::ggplot(
+  data = pre_dat, ggplot2::aes(x = pre_mass)
+) + ggplot2::geom_histogram(binwidth = 0.1, na.rm = TRUE) + ggplot2::labs(title = "Pre-mass distribution")
+ggplot2::ggsave("pre_mass_distribution.png")
+
+
+# Normalize mass, TODO!
+sum_post_mass <- sum(pre_dat$post_mass, na.rm = TRUE)
+sum_pre_mass <- sum(pre_dat$pre_mass, na.rm = TRUE)
+multiple_post_with <- 1.0 + ((sum_pre_mass - sum_post_mass) / sum_post_mass)
+testthat::expect_equal(sum_post_mass * multiple_post_with,  multiple_post_with)
+
+df <- data.frame(
+  mass = c(pre_dat$pre_mass, pre_dat$post_mass),
+  category = c(rep("pre", length(pre_dat$pre_mass)), rep("post", length(pre_dat$pre_mass))),
+  stringsAsFactors = TRUE
+)
+
+
+ggplot2::ggplot(
+    df,
+    ggplot2::aes(mass, fill = category)
+) + ggplot2::geom_histogram(alpha = 0.5, ggplot2::aes(y = ..density..),
+    position = 'identity',
+    binwidth = 0.1
+)
