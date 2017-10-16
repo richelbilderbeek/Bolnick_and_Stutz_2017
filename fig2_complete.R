@@ -2,6 +2,8 @@
 #  - Why use the *absolute* deviation from cage mean body mass, as in figure 2?
 #  - How would it look like if the signed deviation is used?
 rm(list = ls())
+par(mfrow = c(1,1))
+
 setwd("~/GitHubs/Bolnick_and_Stutz_2017")
 traits_filename <- "Bolnick_traits.txt"
 
@@ -39,37 +41,35 @@ pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "absolute deviation from cage mean body mass",cex.lab = 1.5)
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+llfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(llfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3)
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+lsfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(lsfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3, lty = 2)
 
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+slfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(slfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "dark green", lwd = 3, lty = 2)
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+ssfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(ssfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "dark green", lwd = 3)
-text(1,0.18, "P = 0.502", col = "blue", cex = 1.2)
-text(1,0.65, "P = 0.048", col = "blue", cex = 1.2)
-text(1,0.84, "P = 0.101", col = "dark green", cex = 1.2)
-text(1,0.9, "P = 0.073", col = "darkgreen", cex = 1.2)
 
-
-
+text(1,0.18, paste0("P = ", formatC(as.double(coef(summary(llfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
+text(1,0.65, paste0("P = ", formatC(as.double(coef(summary(lsfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
+text(1,0.84, paste0("P = ", formatC(as.double(coef(summary(slfit))[,4][2]), digits = 3)), col = "dark green", cex = 1.2)
+text(1,0.9 , paste0("P = ", formatC(as.double(coef(summary(ssfit))[,4][2]), digits = 2)), col = "darkgreen", cex = 1.2)
 #-------------------------------------------------------------------------------
 # Start of code using the non-absolute value
 #-------------------------------------------------------------------------------
@@ -92,33 +92,42 @@ pre_dat$cage_mass_mean_deviation_sd <- (pre_dat$pre_mass - pre_dat$cage_mass_mea
 
 testthat::expect_equivalent(mean(pre_dat$cage_mass_mean_deviation_sd, na.rm = TRUE), 0.0)
 
+
+
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "deviation from cage mean body mass",cex.lab = 1.5)
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+llfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(llfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3)
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+lsfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(lsfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3, lty = 2)
 
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+slfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(slfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "dark green", lwd = 3, lty = 2)
 
-tempmod <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+ssfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
-yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
+yvals <- predict(ssfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "dark green", lwd = 3)
+
+text(1,0.15, paste0("P = ", formatC(as.double(coef(summary(llfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
+text(1,0.70, paste0("P = ", formatC(as.double(coef(summary(lsfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
+text(0.8,0.84, paste0("P = ", formatC(as.double(coef(summary(slfit))[,4][2]), digits = 3)), col = "dark green", cex = 1.2)
+text(1,0.9 , paste0("P = ", formatC(as.double(coef(summary(ssfit))[,4][2]), digits = 2)), col = "darkgreen", cex = 1.2)
+
+summary(slfit)
 
 legend(
   x = 0.8, y = 0.6,
@@ -141,6 +150,8 @@ survival_per_mass <- dplyr::select(pre_dat, c(origin, transplant, survived, cage
 
 # Remove Controls
 survival_per_mass <- survival_per_mass[ survival_per_mass$transplant != "Control", ]
+
+# Add history as one column
 calc_history <- function(origin, transplant) {
   testit::assert(origin == "Stream" || origin == "Lake")
   testit::assert(transplant == "Stream" || transplant == "Lake")
@@ -148,20 +159,35 @@ calc_history <- function(origin, transplant) {
   to <- ifelse(transplant == "Stream", "s", "l")
   return(paste0(from, to))
 }
-#dplyr::tally(traits$origin)
 survival_per_mass$history <- as.factor(mapply(calc_history, survival_per_mass$origin, survival_per_mass$transplant))
 
-
+# Ploty survival per mass with a binomial fit
 binomial_smooth <- function(...) {
   ggplot2::geom_smooth(method = "glm", method.args = list(family = "binomial"), ...)
 }
+
+# General pattern
+ggplot2::ggplot(
+  survival_per_mass,
+  ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived)
+) +
+  ggplot2::scale_color_manual(values = c("blue", "blue", "green", "green")) +
+  ggplot2::geom_point() +
+  ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1, color = "black") +
+  ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1, color = "blue") +
+  ggplot2::geom_smooth(alpha = 0.25, color = "red") +
+  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
+  ggplot2::scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid"))
+
 ggplot2::ggplot(
   survival_per_mass,
   ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived, color = history, linetype = history)
 ) +
-    ggplot2::scale_color_manual(values = c("blue", "blue", "green", "green")) +
+  ggplot2::scale_color_manual(values = c("blue", "blue", "green", "green")) +
   ggplot2::geom_point() +
-  binomial_smooth(alpha = 0.25) +
+  ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
+  # ggplot2::geom_smooth(alpha = 0.25) +
+  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
   ggplot2::scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid"))
 
 ggplot2::ggsave("fig2_non_absolute_ggplot.png")
@@ -218,3 +244,4 @@ ggplot2::ggplot(
     position = 'identity',
     binwidth = 0.0005
 ) + ggplot2::geom_density(alpha = 0.25)
+

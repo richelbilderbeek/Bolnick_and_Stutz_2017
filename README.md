@@ -11,7 +11,7 @@ When taking just the relative
 normalized body mass, this pattern breaks down:
  
  * in the lake: smaller individuals thrive
- * n the stream: bigger individuals thrive.
+ * in the stream: bigger individuals thrive.
 
 ![Figure 2, taking the relative body size](fig2_non_absolute.png)
 
