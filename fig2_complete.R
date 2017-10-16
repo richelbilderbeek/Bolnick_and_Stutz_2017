@@ -124,7 +124,7 @@ lines(xvals, yvals$fit, col = "dark green", lwd = 3)
 
 text(1,0.15, paste0("P = ", formatC(as.double(coef(summary(llfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
 text(1,0.70, paste0("P = ", formatC(as.double(coef(summary(lsfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
-text(0.8,0.84, paste0("P = ", formatC(as.double(coef(summary(slfit))[,4][2]), digits = 3)), col = "dark green", cex = 1.2)
+text(0.75,0.84, paste0("P = ", formatC(as.double(coef(summary(slfit))[,4][2]), digits = 3)), col = "dark green", cex = 1.2)
 text(1,0.9 , paste0("P = ", formatC(as.double(coef(summary(ssfit))[,4][2]), digits = 2)), col = "darkgreen", cex = 1.2)
 
 summary(slfit)
@@ -146,6 +146,7 @@ legend(
 #-------------------------------------------------------------------------------
 # Re-do same analysis with confidence intervals
 #-------------------------------------------------------------------------------
+names(pre_dat)
 survival_per_mass <- dplyr::select(pre_dat, c(origin, transplant, survived, cage_mass_mean_deviation_sd))
 
 # Remove Controls
