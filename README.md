@@ -15,6 +15,11 @@ normalized body mass, this pattern breaks down:
 
 ![Figure 2, taking the relative body size](fig2_non_absolute.png)
 
+With 95% confidence interval added:
+
+![Figure 2, taking the relative body size, with confidence intervals](fig2_non_absolute_ggplot.png)
+
+
 ## Is there evidence that the extreme phenotypes survive better?
 
 With a parabolic fit: yes

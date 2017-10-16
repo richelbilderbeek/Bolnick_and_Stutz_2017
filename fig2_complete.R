@@ -134,6 +134,39 @@ legend(
 #text(1,0.84, "P = 0.101", col = "dark green", cex = 1.2)
 #text(1,0.9, "P = 0.073", col = "darkgreen", cex = 1.2)
 
+#-------------------------------------------------------------------------------
+# Re-do same analysis with confidence intervals
+#-------------------------------------------------------------------------------
+survival_per_mass <- dplyr::select(pre_dat, c(origin, transplant, survived, cage_mass_mean_deviation_sd))
+
+# Remove Controls
+survival_per_mass <- survival_per_mass[ survival_per_mass$transplant != "Control", ]
+calc_history <- function(origin, transplant) {
+  testit::assert(origin == "Stream" || origin == "Lake")
+  testit::assert(transplant == "Stream" || transplant == "Lake")
+  from <- ifelse(origin == "Stream", "s", "l")
+  to <- ifelse(transplant == "Stream", "s", "l")
+  return(paste0(from, to))
+}
+#dplyr::tally(traits$origin)
+survival_per_mass$history <- as.factor(mapply(calc_history, survival_per_mass$origin, survival_per_mass$transplant))
+
+
+binomial_smooth <- function(...) {
+  ggplot2::geom_smooth(method = "glm", method.args = list(family = "binomial"), ...)
+}
+ggplot2::ggplot(
+  survival_per_mass,
+  ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived, color = history, linetype = history)
+) +
+    ggplot2::scale_color_manual(values = c("blue", "blue", "green", "green")) +
+  ggplot2::geom_point() +
+  binomial_smooth(alpha = 0.25) +
+  ggplot2::scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid"))
+
+ggplot2::ggsave("fig2_non_absolute_ggplot.png")
+ggplot2::ggsave("fig2_non_absolute_ggplot.svg")
+
 
 # Did the individuals with an extreme mass have a higher survival?
 # If yes, a parabola fit and a LOESS (locally weighted scatterplot smoothing) fit should show this
