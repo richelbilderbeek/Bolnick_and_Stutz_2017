@@ -29,3 +29,9 @@ With a parabolic fit: yes
 With a LOWESS fit: no
 
 ![](pre_mass_survival_2.png)
+
+# Do minority fish have a higher fitness at the extremes?
+
+No.
+
+![](minority_fish_fitnesses.png)

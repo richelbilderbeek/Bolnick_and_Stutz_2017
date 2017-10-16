@@ -93,7 +93,6 @@ pre_dat$cage_mass_mean_deviation_sd <- (pre_dat$pre_mass - pre_dat$cage_mass_mea
 testthat::expect_equivalent(mean(pre_dat$cage_mass_mean_deviation_sd, na.rm = TRUE), 0.0)
 
 
-
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "deviation from cage mean body mass",cex.lab = 1.5)
 
@@ -147,10 +146,41 @@ legend(
 # Re-do same analysis with confidence intervals
 #-------------------------------------------------------------------------------
 names(pre_dat)
-survival_per_mass <- dplyr::select(pre_dat, c(origin, transplant, survived, cage_mass_mean_deviation_sd))
-
+head(pre_dat)
+survival_per_mass <- dplyr::select(pre_dat, c(enclosure, origin, transplant, survived, cage_mass_mean_deviation_sd))
 # Remove Controls
 survival_per_mass <- survival_per_mass[ survival_per_mass$transplant != "Control", ]
+
+least_frequent <- function(items) {
+  # Debugging
+  if (length(items) != 3) { return(NA) }
+  testit::assert(length(items) == 3)
+  # First is single
+  if (items[1] != items[2] && items[1] != items[3]) {
+    testit::assert(items[2] == items[3])
+    return(items[1])
+  }
+  # Second is single
+  if (items[2] != items[1] && items[2] != items[3]) {
+    testit::assert(items[1] == items[3])
+    return(items[2])
+  }
+  testit::assert(items[1] == items[2])
+  return(items[3])
+}
+testit::assert(least_frequent(c("a", "b", "b")) == "a")
+testit::assert(least_frequent(c("b", "a", "b")) == "a")
+testit::assert(least_frequent(c("b", "b", "a")) == "a")
+
+table(survival_per_mass$enclosure)
+
+# Create a category to determine the minority
+`%>%` <- dplyr::`%>%`
+names(survival_per_mass)
+minorities <- survival_per_mass %>% dplyr::group_by(enclosure) %>%
+       dplyr::summarise(minority = least_frequent(origin))
+names(minorities)
+survival_per_mass <-merge(x = survival_per_mass, y = minorities, by = "enclosure", all = TRUE)
 
 # Add history as one column
 calc_history <- function(origin, transplant) {
@@ -172,13 +202,51 @@ ggplot2::ggplot(
   survival_per_mass,
   ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived)
 ) +
-  ggplot2::scale_color_manual(values = c("blue", "blue", "green", "green")) +
   ggplot2::geom_point() +
   ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1, color = "black") +
   ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1, color = "blue") +
   ggplot2::geom_smooth(alpha = 0.25, color = "red") +
   # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
   ggplot2::scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid"))
+
+# General pattern per minority fish
+names(survival_per_mass)
+ggplot2::ggplot(
+  na.omit(survival_per_mass[ survival_per_mass$origin == survival_per_mass$minority, ]),
+  ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived)
+) +
+  ggplot2::geom_jitter(height = 0.02) +
+  #ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1) +
+  ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
+  #ggplot2::geom_smooth(alpha = 0.25) +
+  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
+  ggplot2::labs(title = "Fitnesses of fish that are the minority")
+
+ggplot2::ggsave("minority_fish_fitnesses.svg")
+ggplot2::ggsave("minority_fish_fitnesses.png")
+
+ggplot2::ggplot(
+  na.omit(survival_per_mass[ survival_per_mass$origin == survival_per_mass$minority, ]),
+  ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived, color = minority)
+) +
+  ggplot2::geom_jitter(height = 0.02) +
+  #ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1) +
+  ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
+  #ggplot2::geom_smooth(alpha = 0.25) +
+  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
+  ggplot2::labs(title = "Fitnesses of fish that are the minority, seperated by origin")
+
+ggplot2::ggplot(
+  na.omit(survival_per_mass[ survival_per_mass$origin != survival_per_mass$minority, ]),
+  ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived, color = minority)
+) +
+  ggplot2::geom_jitter(height = 0.02) +
+  #ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1) +
+  ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
+  #ggplot2::geom_smooth(alpha = 0.25) +
+  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
+  ggplot2::labs(title = "Fitnesses of fish that are the majority")
+
 
 ggplot2::ggplot(
   survival_per_mass,
@@ -193,6 +261,16 @@ ggplot2::ggplot(
 
 ggplot2::ggsave("fig2_non_absolute_ggplot.png")
 ggplot2::ggsave("fig2_non_absolute_ggplot.svg")
+
+ggplot2::ggplot(
+    survival_per_mass,
+    ggplot2::aes(cage_mass_mean_deviation_sd)
+) + ggplot2::geom_histogram(alpha = 0.25, ggplot2::aes(y = ..density..),
+    position = 'identity',
+    binwidth = 0.1
+) + ggplot2::geom_density() + ggplot2::labs(title = "Distribution of deviations")
+
+
 
 
 # Did the individuals with an extreme mass have a higher survival?
@@ -245,4 +323,14 @@ ggplot2::ggplot(
     position = 'identity',
     binwidth = 0.0005
 ) + ggplot2::geom_density(alpha = 0.25)
+
+
+ggplot2::ggplot(
+    data.frame(sd = cage_mass_sd),
+    ggplot2::aes(x = sd)
+) + ggplot2::geom_histogram(alpha = 0.25, ggplot2::aes(y = ..density..),
+    position = 'identity',
+    binwidth = 0.1
+) + ggplot2::geom_density(alpha = 0.25)
+
 
