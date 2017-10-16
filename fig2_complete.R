@@ -206,8 +206,10 @@ ggplot2::ggplot(
   ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1, color = "black") +
   ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1, color = "blue") +
   ggplot2::geom_smooth(alpha = 0.25, color = "red") +
-  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
-  ggplot2::scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid"))
+  ggplot2::labs(title = "Survival of normalized body masses")
+
+ggplot2::ggsave("fig2_non_absolute_ggplot_all.svg")
+ggplot2::ggsave("fig2_non_absolute_ggplot_all.png")
 
 # General pattern per minority fish
 names(survival_per_mass)
