@@ -307,10 +307,26 @@ ggplot2::ggplot(
 
 ggplot2::ggsave("pre_mass_distribution.png")
 
+df <- data.frame(
+  mass = c(pre_dat$pre_mass, pre_dat$post_mass),
+  category = c(rep("pre", length(pre_dat$pre_mass)), rep("post", length(pre_dat$pre_mass))),
+  stringsAsFactors = TRUE
+)
+ggplot2::ggplot(
+    df,
+    ggplot2::aes(mass, fill = category)
+) + ggplot2::geom_histogram(alpha = 0.25, ggplot2::aes(y = ..density..),
+    position = 'identity',
+    binwidth = 0.05
+) + ggplot2::geom_density(alpha = 0.25)
+
 
 # Did the individuals with an extreme mass have a higher survival?
 sum_post_mass <- sum(pre_dat$post_mass, na.rm = TRUE)
 sum_pre_mass <- sum(pre_dat$pre_mass, na.rm = TRUE)
+
+# Ten percent decrease in body mass:
+#  100 * (sum_post_mass - sum_pre_mass) / sum_pre_mass
 
 df <- data.frame(
   normalized_mass = c(pre_dat$pre_mass / sum_pre_mass, pre_dat$post_mass / sum_post_mass),
