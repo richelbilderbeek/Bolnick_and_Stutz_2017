@@ -11,10 +11,10 @@ if (!file.exists(traits_filename)) {
 }
 
 pre_dat <- read.csv(traits_filename, sep = " ")
-names(pre_dat)
 
-# Start of original code
-
+#-------------------------------------------------------------------------------
+# Original code, added comments and did a trivial fix
+#-------------------------------------------------------------------------------
 # Calculate the mean and standard deviation of pre_mass per enclosure
 # Original
 # cage_mass_sd <- tapply(pre_dat$pre_mass, pre_dat$enclosure, sd, na.rm = T)
@@ -70,17 +70,19 @@ text(1,0.9, "P = 0.073", col = "darkgreen", cex = 1.2)
 
 
 
+#-------------------------------------------------------------------------------
 # Start of code using the non-absolute value
+#-------------------------------------------------------------------------------
 cage_mass_sd <- tapply(pre_dat$pre_mass, pre_dat$enclosure, sd, na.rm = T)
 cage_mass_mean <- tapply(pre_dat$pre_mass, pre_dat$enclosure, mean, na.rm = T)
 pre_dat$cage_mass_stdev <- NA
 pre_dat$cage_mass_mean <- NA
 #Fixed
 for(i in 1:nrow(pre_dat)){
-#Original
-#for(i in 1:length(pre_dat$majority)){
-pre_dat$cage_mass_stdev[i] <- cage_mass_sd[names(cage_mass_sd) == pre_dat$enclosure[i]]
-pre_dat$cage_mass_mean[i] <- cage_mass_mean[names(cage_mass_mean) == pre_dat$enclosure[i]]
+  #Original
+  #for(i in 1:length(pre_dat$majority)){
+  pre_dat$cage_mass_stdev[i] <- cage_mass_sd[names(cage_mass_sd) == pre_dat$enclosure[i]]
+  pre_dat$cage_mass_mean[i] <- cage_mass_mean[names(cage_mass_mean) == pre_dat$enclosure[i]]
 }
 
 # Original with abs
@@ -117,35 +119,59 @@ X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$tr
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(tempmod, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "dark green", lwd = 3)
-text(1,0.18, "P = 0.502", col = "blue", cex = 1.2)
-text(1,0.65, "P = 0.048", col = "blue", cex = 1.2)
-text(1,0.84, "P = 0.101", col = "dark green", cex = 1.2)
-text(1,0.9, "P = 0.073", col = "darkgreen", cex = 1.2)
+
+legend(
+  x = 0.8, y = 0.6,
+  c("LL","LS","SL","SS"),
+  col = c("blue", "blue", "green", "green"),
+  lwd = 3,
+  lty = c("solid", "dashed", "dashed", "solid")
+)
+
+# Don't keep these, as these are false
+#text(1,0.18, "P = 0.502", col = "blue", cex = 1.2)
+#text(1,0.65, "P = 0.048", col = "blue", cex = 1.2)
+#text(1,0.84, "P = 0.101", col = "dark green", cex = 1.2)
+#text(1,0.9, "P = 0.073", col = "darkgreen", cex = 1.2)
 
 
+# Did the individuals with an extreme mass have a higher survival?
+# If yes, a parabola fit and a LOESS (locally weighted scatterplot smoothing) fit should show this
+ggplot2::ggplot(
+  data = pre_dat, ggplot2::aes(x = pre_mass, y = survived)
+) +
+  ggplot2::geom_jitter(width = 0.0, height = 0.02, na.rm = TRUE) +
+  # ggplot2::geom_smooth(method = "lm", color = "blue", na.rm = TRUE, alpha = 0.1) +
+  ggplot2::geom_smooth(method = "lm", color = "blue", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
+  ggplot2::geom_smooth(method = "loess", color = "red", na.rm = TRUE, alpha = 0.1) +
+  ggplot2::scale_y_continuous(limits = c(0.0, 1.0)) +
+  ggplot2::labs(title = "Survival per mass")
+
+ggplot2::ggsave("pre_mass_survival_2.png")
+ggplot2::ggsave("pre_mass_survival_2.svg")
+
+# What is the distribution of masses
 ggplot2::ggplot(
   data = pre_dat, ggplot2::aes(x = pre_mass)
 ) + ggplot2::geom_histogram(binwidth = 0.1, na.rm = TRUE) + ggplot2::labs(title = "Pre-mass distribution")
+
 ggplot2::ggsave("pre_mass_distribution.png")
 
 
-# Normalize mass, TODO!
+# Did the individuals with an extreme mass have a higher survival?
 sum_post_mass <- sum(pre_dat$post_mass, na.rm = TRUE)
 sum_pre_mass <- sum(pre_dat$pre_mass, na.rm = TRUE)
-multiple_post_with <- 1.0 + ((sum_pre_mass - sum_post_mass) / sum_post_mass)
-testthat::expect_equal(sum_post_mass * multiple_post_with,  multiple_post_with)
 
 df <- data.frame(
-  mass = c(pre_dat$pre_mass, pre_dat$post_mass),
+  normalized_mass = c(pre_dat$pre_mass / sum_pre_mass, pre_dat$post_mass / sum_post_mass),
   category = c(rep("pre", length(pre_dat$pre_mass)), rep("post", length(pre_dat$pre_mass))),
   stringsAsFactors = TRUE
 )
 
-
 ggplot2::ggplot(
     df,
-    ggplot2::aes(mass, fill = category)
-) + ggplot2::geom_histogram(alpha = 0.5, ggplot2::aes(y = ..density..),
+    ggplot2::aes(normalized_mass, fill = category)
+) + ggplot2::geom_histogram(alpha = 0.25, ggplot2::aes(y = ..density..),
     position = 'identity',
-    binwidth = 0.1
-)
+    binwidth = 0.0005
+) + ggplot2::geom_density(alpha = 0.25)
