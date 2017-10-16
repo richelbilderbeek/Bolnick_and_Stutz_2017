@@ -174,6 +174,16 @@ ggplot2::ggplot(
   data = pre_dat, ggplot2::aes(x = pre_mass, y = survived)
 ) +
   ggplot2::geom_jitter(width = 0.0, height = 0.02, na.rm = TRUE) +
+  ggplot2::geom_smooth(method = "lm", color = "blue", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
+  ggplot2::scale_y_continuous(limits = c(0.0, 1.0)) +
+  ggplot2::labs(title = "Survival per mass")
+
+ggplot2::ggsave("pre_mass_survival_1.png")
+ggplot2::ggsave("pre_mass_survival_1.svg")
+ggplot2::ggplot(
+  data = pre_dat, ggplot2::aes(x = pre_mass, y = survived)
+) +
+  ggplot2::geom_jitter(width = 0.0, height = 0.02, na.rm = TRUE) +
   # ggplot2::geom_smooth(method = "lm", color = "blue", na.rm = TRUE, alpha = 0.1) +
   ggplot2::geom_smooth(method = "lm", color = "blue", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
   ggplot2::geom_smooth(method = "loess", color = "red", na.rm = TRUE, alpha = 0.1) +
