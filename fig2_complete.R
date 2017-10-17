@@ -4,6 +4,52 @@
 rm(list = ls())
 par(mfrow = c(1,1))
 
+#-------------------------------------------------------------------------------
+# Functions
+#-------------------------------------------------------------------------------
+# Add history as one value
+calc_history <- function(origin, transplant) {
+  testit::assert(origin == "Stream" || origin == "Lake")
+  testit::assert(transplant == "Stream" || transplant == "Lake")
+  from <- ifelse(origin == "Stream", "s", "l")
+  to <- ifelse(transplant == "Stream", "s", "l")
+  return(paste0(from, to))
+}
+testit::assert(calc_history("Lake", "Lake") == "ll")
+testit::assert(calc_history("Lake", "Stream") == "ls")
+testit::assert(calc_history("Stream", "Lake") == "sl")
+testit::assert(calc_history("Stream", "Stream") == "ss")
+
+# Find out the item present least frequent
+least_frequent <- function(items) {
+  # Debugging
+  if (length(items) != 3) { return(NA) }
+  testit::assert(length(items) == 3)
+  # First is single
+  if (items[1] != items[2] && items[1] != items[3]) {
+    testit::assert(items[2] == items[3])
+    return(items[1])
+  }
+  # Second is single
+  if (items[2] != items[1] && items[2] != items[3]) {
+    testit::assert(items[1] == items[3])
+    return(items[2])
+  }
+  testit::assert(items[1] == items[2])
+  return(items[3])
+}
+testit::assert(least_frequent(c("a", "b", "b")) == "a")
+testit::assert(least_frequent(c("b", "a", "b")) == "a")
+testit::assert(least_frequent(c("b", "b", "a")) == "a")
+
+# Ploty survival per mass with a binomial fit
+binomial_smooth <- function(...) {
+  ggplot2::geom_smooth(method = "glm", method.args = list(family = "binomial"), ...)
+}
+
+#-------------------------------------------------------------------------------
+# Start of program
+#-------------------------------------------------------------------------------
 setwd("~/GitHubs/Bolnick_and_Stutz_2017")
 traits_filename <- "Bolnick_traits.txt"
 
@@ -11,6 +57,8 @@ if (!file.exists(traits_filename)) {
   stop("File '", traits_filename,
     "' not found. Set the correct working directory")
 }
+
+
 
 pre_dat <- read.csv(traits_filename, sep = " ")
 
@@ -86,9 +134,9 @@ for(i in 1:nrow(pre_dat)){
 }
 
 # Original with abs
-# pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_mean)/pre_dat$cage_mass_stdev
+# pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_mean) / pre_dat$cage_mass_stdev
 # New without abs
-pre_dat$cage_mass_mean_deviation_sd <- (pre_dat$pre_mass - pre_dat$cage_mass_mean) / pre_dat$cage_mass_stdev
+  pre_dat$cage_mass_mean_deviation_sd <-    (pre_dat$pre_mass - pre_dat$cage_mass_mean) / pre_dat$cage_mass_stdev
 
 testthat::expect_equivalent(mean(pre_dat$cage_mass_mean_deviation_sd, na.rm = TRUE), 0.0)
 
@@ -151,26 +199,6 @@ survival_per_mass <- dplyr::select(pre_dat, c(enclosure, origin, transplant, sur
 # Remove Controls
 survival_per_mass <- survival_per_mass[ survival_per_mass$transplant != "Control", ]
 
-least_frequent <- function(items) {
-  # Debugging
-  if (length(items) != 3) { return(NA) }
-  testit::assert(length(items) == 3)
-  # First is single
-  if (items[1] != items[2] && items[1] != items[3]) {
-    testit::assert(items[2] == items[3])
-    return(items[1])
-  }
-  # Second is single
-  if (items[2] != items[1] && items[2] != items[3]) {
-    testit::assert(items[1] == items[3])
-    return(items[2])
-  }
-  testit::assert(items[1] == items[2])
-  return(items[3])
-}
-testit::assert(least_frequent(c("a", "b", "b")) == "a")
-testit::assert(least_frequent(c("b", "a", "b")) == "a")
-testit::assert(least_frequent(c("b", "b", "a")) == "a")
 
 table(survival_per_mass$enclosure)
 
@@ -182,20 +210,27 @@ minorities <- survival_per_mass %>% dplyr::group_by(enclosure) %>%
 names(minorities)
 survival_per_mass <-merge(x = survival_per_mass, y = minorities, by = "enclosure", all = TRUE)
 
-# Add history as one column
-calc_history <- function(origin, transplant) {
-  testit::assert(origin == "Stream" || origin == "Lake")
-  testit::assert(transplant == "Stream" || transplant == "Lake")
-  from <- ifelse(origin == "Stream", "s", "l")
-  to <- ifelse(transplant == "Stream", "s", "l")
-  return(paste0(from, to))
-}
 survival_per_mass$history <- as.factor(mapply(calc_history, survival_per_mass$origin, survival_per_mass$transplant))
 
-# Ploty survival per mass with a binomial fit
-binomial_smooth <- function(...) {
-  ggplot2::geom_smooth(method = "glm", method.args = list(family = "binomial"), ...)
-}
+# Figure 2, non-absolute value
+ggplot2::theme_set(ggplot2::theme_gray(base_size = 22))
+
+ggplot2::ggplot(
+  survival_per_mass,
+  ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived, color = history, linetype = history)
+) +
+  ggplot2::scale_color_manual(values = c("blue", "blue", "green", "green")) +
+  ggplot2::geom_point() +
+  ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
+  # ggplot2::geom_smooth(alpha = 0.25) +
+  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
+  ggplot2::scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid")) +
+  ggplot2::labs(title = "Survival for different body masses")
+  #  ggplot2::theme(legend.text = ggplot2::element_text(size = 14))
+
+ggplot2::ggsave("fig2_non_absolute_ggplot.png")
+ggplot2::ggsave("fig2_non_absolute_ggplot.svg")
+
 
 # General pattern
 ggplot2::ggplot(
@@ -203,16 +238,15 @@ ggplot2::ggplot(
   ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived)
 ) +
   ggplot2::geom_point() +
-  ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1, color = "black") +
+  #ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1, color = "black") +
   ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1, color = "blue") +
-  ggplot2::geom_smooth(alpha = 0.25, color = "red") +
+  #ggplot2::geom_smooth(alpha = 0.25, color = "red") +
   ggplot2::labs(title = "Survival of normalized body masses")
 
 ggplot2::ggsave("fig2_non_absolute_ggplot_all.svg")
 ggplot2::ggsave("fig2_non_absolute_ggplot_all.png")
 
 # General pattern per minority fish
-names(survival_per_mass)
 ggplot2::ggplot(
   na.omit(survival_per_mass[ survival_per_mass$origin == survival_per_mass$minority, ]),
   ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived)
@@ -250,19 +284,10 @@ ggplot2::ggplot(
   ggplot2::labs(title = "Fitnesses of fish that are the majority")
 
 
-ggplot2::ggplot(
-  survival_per_mass,
-  ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived, color = history, linetype = history)
-) +
-  ggplot2::scale_color_manual(values = c("blue", "blue", "green", "green")) +
-  ggplot2::geom_point() +
-  ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1) +
-  # ggplot2::geom_smooth(alpha = 0.25) +
-  # binomial_smooth(alpha = 0.25, fullrange = FALSE) +
-  ggplot2::scale_linetype_manual(values = c("solid", "dashed", "dashed", "solid"))
 
-ggplot2::ggsave("fig2_non_absolute_ggplot.png")
-ggplot2::ggsave("fig2_non_absolute_ggplot.svg")
+#-------------------------------------------------------------------------------
+# Misc
+#-------------------------------------------------------------------------------
 
 ggplot2::ggplot(
     survival_per_mass,
@@ -301,11 +326,11 @@ ggplot2::ggsave("pre_mass_survival_2.png")
 ggplot2::ggsave("pre_mass_survival_2.svg")
 
 # What is the distribution of masses
-ggplot2::ggplot(
-  data = pre_dat, ggplot2::aes(x = pre_mass)
-) + ggplot2::geom_histogram(binwidth = 0.1, na.rm = TRUE) + ggplot2::labs(title = "Pre-mass distribution")
-
-ggplot2::ggsave("pre_mass_distribution.png")
+# ggplot2::ggplot(
+#   data = pre_dat, ggplot2::aes(x = pre_mass)
+# ) + ggplot2::geom_histogram(binwidth = 0.1, na.rm = TRUE) + ggplot2::labs(title = "Pre-mass distribution")
+#
+# ggplot2::ggsave("pre_mass_distribution.png")
 
 df <- data.frame(
   mass = c(pre_dat$pre_mass, pre_dat$post_mass),
@@ -313,7 +338,7 @@ df <- data.frame(
   stringsAsFactors = TRUE
 )
 ggplot2::ggplot(
-    df,
+    na.omit(df),
     ggplot2::aes(mass, fill = category)
 ) + ggplot2::geom_histogram(alpha = 0.25, ggplot2::aes(y = ..density..),
     position = 'identity',
@@ -324,7 +349,6 @@ ggplot2::ggplot(
 # Did the individuals with an extreme mass have a higher survival?
 sum_post_mass <- sum(pre_dat$post_mass, na.rm = TRUE)
 sum_pre_mass <- sum(pre_dat$pre_mass, na.rm = TRUE)
-
 # Ten percent decrease in body mass:
 #  100 * (sum_post_mass - sum_pre_mass) / sum_pre_mass
 
@@ -335,20 +359,10 @@ df <- data.frame(
 )
 
 ggplot2::ggplot(
-    df,
+    na.omit(df),
     ggplot2::aes(normalized_mass, fill = category)
 ) + ggplot2::geom_histogram(alpha = 0.25, ggplot2::aes(y = ..density..),
     position = 'identity',
     binwidth = 0.0005
 ) + ggplot2::geom_density(alpha = 0.25)
-
-
-ggplot2::ggplot(
-    data.frame(sd = cage_mass_sd),
-    ggplot2::aes(x = sd)
-) + ggplot2::geom_histogram(alpha = 0.25, ggplot2::aes(y = ..density..),
-    position = 'identity',
-    binwidth = 0.1
-) + ggplot2::geom_density(alpha = 0.25)
-
 
