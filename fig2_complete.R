@@ -4,6 +4,9 @@
 rm(list = ls())
 par(mfrow = c(1,1))
 
+# Big font for presentation
+ggplot2::theme_set(ggplot2::theme_gray(base_size = 22))
+
 #-------------------------------------------------------------------------------
 # Functions
 #-------------------------------------------------------------------------------
@@ -89,26 +92,26 @@ pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "absolute deviation from cage mean body mass",cex.lab = 1.5)
 
-llfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+llfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(llfit)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(llfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3)
 
-lsfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+lsfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial"); summary(lsfit)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(lsfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3, lty = 2)
 
 
-slfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+slfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial"); summary(slfit)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(slfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "dark green", lwd = 3, lty = 2)
 
-ssfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+ssfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial"); summary(ssfit)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(ssfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
@@ -144,26 +147,26 @@ testthat::expect_equivalent(mean(pre_dat$cage_mass_mean_deviation_sd, na.rm = TR
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "deviation from cage mean body mass",cex.lab = 1.5)
 
-llfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+llfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial")
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(llfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3)
 
-lsfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+lsfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream",], family = "binomial")
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(lsfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "blue", lwd = 3, lty = 2)
 
 
-slfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial"); summary(tempmod)
+slfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake",], family = "binomial")
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Lake"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(slfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
 lines(xvals, yvals$fit, col = "dark green", lwd = 3, lty = 2)
 
-ssfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial"); summary(tempmod)
+ssfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream",], family = "binomial")
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Stream" & pre_dat$transplant == "Stream"]
 xvals <- seq(min(X), max(X), by = 0.01)
 yvals <- predict(ssfit, newdata = data.frame(cage_mass_mean_deviation_sd = xvals), se.fit = T, "response")
@@ -173,8 +176,6 @@ text(1,0.15, paste0("P = ", formatC(as.double(coef(summary(llfit))[,4][2]), digi
 text(1,0.70, paste0("P = ", formatC(as.double(coef(summary(lsfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
 text(0.75,0.84, paste0("P = ", formatC(as.double(coef(summary(slfit))[,4][2]), digits = 3)), col = "dark green", cex = 1.2)
 text(1,0.9 , paste0("P = ", formatC(as.double(coef(summary(ssfit))[,4][2]), digits = 2)), col = "darkgreen", cex = 1.2)
-
-summary(slfit)
 
 legend(
   x = 0.8, y = 0.6,
@@ -199,8 +200,9 @@ survival_per_mass <- dplyr::select(pre_dat, c(enclosure, origin, transplant, sur
 # Remove Controls
 survival_per_mass <- survival_per_mass[ survival_per_mass$transplant != "Control", ]
 
-
+# Not all cages have three fishes?
 table(survival_per_mass$enclosure)
+table(table(survival_per_mass$enclosure))
 
 # Create a category to determine the minority
 `%>%` <- dplyr::`%>%`
@@ -213,8 +215,6 @@ survival_per_mass <-merge(x = survival_per_mass, y = minorities, by = "enclosure
 survival_per_mass$history <- as.factor(mapply(calc_history, survival_per_mass$origin, survival_per_mass$transplant))
 
 # Figure 2, non-absolute value
-ggplot2::theme_set(ggplot2::theme_gray(base_size = 22))
-
 ggplot2::ggplot(
   survival_per_mass,
   ggplot2::aes(x = cage_mass_mean_deviation_sd, y = survived, color = history, linetype = history)
@@ -228,8 +228,8 @@ ggplot2::ggplot(
   ggplot2::labs(title = "Survival for different body masses")
   #  ggplot2::theme(legend.text = ggplot2::element_text(size = 14))
 
-ggplot2::ggsave("fig2_non_absolute_ggplot.png")
-ggplot2::ggsave("fig2_non_absolute_ggplot.svg")
+ggplot2::ggsave("fig2_non_absolute_ggplot.png", width = 7, height = 7)
+ggplot2::ggsave("fig2_non_absolute_ggplot.svg", width = 7, height = 7)
 
 
 # General pattern
@@ -240,11 +240,11 @@ ggplot2::ggplot(
   ggplot2::geom_point() +
   #ggplot2::geom_smooth(method = "lm", na.rm = TRUE, alpha = 0.1, color = "black") +
   ggplot2::geom_smooth(method = "lm", formula = y ~ x + I(x^2), na.rm = TRUE, alpha = 0.1, color = "blue") +
-  #ggplot2::geom_smooth(alpha = 0.25, color = "red") +
+  ggplot2::geom_smooth(alpha = 0.25, color = "red") +
   ggplot2::labs(title = "Survival of normalized body masses")
 
-ggplot2::ggsave("fig2_non_absolute_ggplot_all.svg")
-ggplot2::ggsave("fig2_non_absolute_ggplot_all.png")
+ggplot2::ggsave("fig2_non_absolute_ggplot_all.svg", width = 7, height = 7)
+ggplot2::ggsave("fig2_non_absolute_ggplot_all.png", width = 7, height = 7)
 
 # General pattern per minority fish
 ggplot2::ggplot(
@@ -310,8 +310,8 @@ ggplot2::ggplot(
   ggplot2::scale_y_continuous(limits = c(0.0, 1.0)) +
   ggplot2::labs(title = "Survival per mass")
 
-ggplot2::ggsave("pre_mass_survival_1.png")
-ggplot2::ggsave("pre_mass_survival_1.svg")
+ggplot2::ggsave("pre_mass_survival_1.png", width = 7, height = 7)
+ggplot2::ggsave("pre_mass_survival_1.svg", width = 7, height = 7)
 ggplot2::ggplot(
   data = pre_dat, ggplot2::aes(x = pre_mass, y = survived)
 ) +
@@ -322,8 +322,8 @@ ggplot2::ggplot(
   ggplot2::scale_y_continuous(limits = c(0.0, 1.0)) +
   ggplot2::labs(title = "Survival per mass")
 
-ggplot2::ggsave("pre_mass_survival_2.png")
-ggplot2::ggsave("pre_mass_survival_2.svg")
+ggplot2::ggsave("pre_mass_survival_2.png", width = 7, height = 7)
+ggplot2::ggsave("pre_mass_survival_2.svg", width = 7, height = 7)
 
 # What is the distribution of masses
 # ggplot2::ggplot(
