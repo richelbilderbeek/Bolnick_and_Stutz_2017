@@ -12,9 +12,18 @@ normalized body mass, this pattern breaks down,
 as shown in plot version C shown below.
 
 Instead, the conclusion should be:
- 
+
 - in the lake: smaller individuals thrive
 - in the stream: bigger individuals thrive.
+
+```mermaid
+flowchart TD
+    A
+    B
+    C
+    A --> |reproduced| B
+    B --> |using non-absolute values| C  
+```
 
 <!-- markdownlint-disable MD013 --><!-- Tables cannot be split up over lines, hence will break 80 characters per line -->
 
@@ -27,16 +36,17 @@ C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the
 <!-- markdownlint-enable MD013 -->
 
 
-
 ## Extra figures
 
 With 95% confidence interval added:
 
 ![Figure 2, taking the relative body size, with confidence intervals](fig2_non_absolute_ggplot.png)
-
+    
 Merge all four treatments:
 
-![](fig2_non_absolute_ggplot_all.png)
+![Relation between relative body mass and fitness](fig2_non_absolute_ggplot_all.png)
+
+> Relation between relative body mass and fitness
 
 ## Is there evidence that the extreme phenotypes survive better?
 
