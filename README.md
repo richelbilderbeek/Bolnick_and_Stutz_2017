@@ -11,9 +11,9 @@ normalized body mass:
 
 > Figure 2, taking the absolute of the relative body size, in the paper
 
-![Figure 2, taking the absolute of the relative body size](fig2.png)
+![Figure 2, taking the absolute of the relative body size, by running fig2.R](fig2.png)
 
-> Figure 2, taking the absolute of the relative body size
+> Figure 2, taking the absolute of the relative body size, by running [fig2.R](fig2.R)
 
 When taking just the relative
 normalized body mass, this pattern breaks down:
