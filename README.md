@@ -7,14 +7,11 @@ Notes for `[Bolnick & Stutz, 2017]`.
 Extreme body sizes fare better, when taking the *absolute* of the relative
 normalized body mass:
 
-![Figure 2, taking the absolute of the relative body size, in the paper](figure_2_in_paper.png)
-
-> Figure 2, taking the absolute of the relative body size, in the paper
-
-
-![Figure 2, taking the absolute of the relative body size, by running fig2_complete.R](fig2_reproduced.png)
-
-> Figure 2, taking the absolute of the relative body size, by running [fig2_complete.R](fig2_complete.R)
+Figure 2 version|Description
+---------------------------------------------------|---------------------------------------------------
+![Figure 2, in the paper](figure_2_in_paper.png)   |As in paper
+![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using auhor's code
+![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real valus
 
 When taking just the relative
 normalized body mass, this pattern breaks down:
