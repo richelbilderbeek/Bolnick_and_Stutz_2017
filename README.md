@@ -62,7 +62,7 @@ With a LOWESS fit: no
 
 No.
 
-![Fitnesses of fish that are in the minority](minority_fish_fitnesses.png)
+![Fitness values of fish that are in the minority](minority_fish_fitnesses.png)
 
 ## References
 
