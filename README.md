@@ -2,24 +2,28 @@
 
 Notes for `[Bolnick & Stutz, 2017]`.
 
-## Claim of the paper
-
-Extreme body sizes fare better, when taking the *absolute* of the relative
-normalized body mass:
-
-Figure 2 version|Description
----------------------------------------------------|---------------------------------------------------
-![Figure 2, in the paper](figure_2_in_paper.png)   |As in paper
-![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using auhor's code, see [fig2_complete.R](fig2_complete.R)
-![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real valus, see [fig2_complete.R](fig2_complete.R)
+The conclusion of the paper is that extreme body sizes fare better.
+This can be shown in a plot that uses the *absolute* of the relative
+normalized body mass, as shown in plot versions A (from the paper)
+and B (reproduced from data) below.
 
 When taking just the relative
-normalized body mass, this pattern breaks down:
- 
- * in the lake: smaller individuals thrive
- * in the stream: bigger individuals thrive.
+normalized body mass, this pattern breaks down,
+as shown in plot version C shown below.
 
-![Figure 2, taking the relative body size](fig2_non_absolute.png)
+Instead, the conclusion should be:
+ 
+- in the lake: smaller individuals thrive
+- in the stream: bigger individuals thrive.
+
+Version|Figure 2 version|Description
+-------|---------------------------------------------------|---------------------------------------------------
+A      |![Figure 2, in the paper](figure_2_in_paper.png)   |As in paper
+B      |![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using auhor's code, see [fig2_complete.R](fig2_complete.R)
+C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real valus, see [fig2_complete.R](fig2_complete.R)
+
+
+## Extra figures
 
 With 95% confidence interval added:
 
