@@ -18,10 +18,11 @@ calc_history <- function(origin, transplant) {
   to <- ifelse(transplant == "Stream", "s", "l")
   return(paste0(from, to))
 }
-testit::assert(calc_history("Lake", "Lake") == "ll")
-testit::assert(calc_history("Lake", "Stream") == "ls")
-testit::assert(calc_history("Stream", "Lake") == "sl")
-testit::assert(calc_history("Stream", "Stream") == "ss")
+
+testthat::expect_equal(calc_history("Lake", "Lake"), "ll")
+testthat::expect_equal(calc_history("Lake", "Stream"), "ls")
+testthat::expect_equal(calc_history("Stream", "Lake"), "sl")
+testthat::expect_equal(calc_history("Stream", "Stream"), "ss")
 
 # Find out the item present least frequent
 least_frequent <- function(items) {
@@ -41,9 +42,9 @@ least_frequent <- function(items) {
   testit::assert(items[1] == items[2])
   return(items[3])
 }
-testit::assert(least_frequent(c("a", "b", "b")) == "a")
-testit::assert(least_frequent(c("b", "a", "b")) == "a")
-testit::assert(least_frequent(c("b", "b", "a")) == "a")
+testthat::expect_equal(least_frequent(c("a", "b", "b")), "a")
+testthat::expect_equal(least_frequent(c("b", "a", "b")), "a")
+testthat::expect_equal(least_frequent(c("b", "b", "a")), "a")
 
 # Ploty survival per mass with a binomial fit
 binomial_smooth <- function(...) {
@@ -53,17 +54,21 @@ binomial_smooth <- function(...) {
 #-------------------------------------------------------------------------------
 # Start of program
 #-------------------------------------------------------------------------------
-setwd("~/GitHubs/Bolnick_and_Stutz_2017")
+testthat::expect_true(stringr::str_detect(getwd(), "Bolnick_and_Stutz_2017"))
 traits_filename <- "Bolnick_traits.txt"
 
 if (!file.exists(traits_filename)) {
   stop("File '", traits_filename,
-    "' not found. Set the correct working directory")
+    "' not found. Set the correct working directory, ",
+    "e.g. '~/GitHubs/Bolnick_and_Stutz_2017'"
+  )
 }
 
 
 
 pre_dat <- read.csv(traits_filename, sep = " ")
+pre_dat$origin <- as.factor(pre_dat$origin) # RJCB
+pre_dat$transplant <- as.factor(pre_dat$transplant) # RJCB
 
 #-------------------------------------------------------------------------------
 # Original code, added comments and did a trivial fix
@@ -89,8 +94,20 @@ for(i in 1:nrow(pre_dat)) {
 # Take the absolution normalized deviation
 pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_mean)/pre_dat$cage_mass_stdev
 
+# ADDED: save to file for easier analysis
+readr::write_csv(pre_dat, "data_with_abs_added_cols.csv") # Added by RJCB
+
+png("fig2_reproduced.png") # Added by RJCB
+
 par(mar = c(5,5,1,1))
-plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "absolute deviation from cage mean body mass",cex.lab = 1.5)
+plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd,
+  pre_dat, 
+  pch = 15+as.numeric(transplant), 
+  col = 5-as.numeric(origin), 
+  ylab = "survival", 
+  xlab = "absolute deviation from cage mean body mass",
+  cex.lab = 1.5
+)
 
 llfit <- glm(survived ~ cage_mass_mean_deviation_sd, pre_dat[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake",], family = "binomial"); summary(llfit)
 X <- pre_dat$cage_mass_mean_deviation_sd[pre_dat$origin == "Lake" & pre_dat$transplant == "Lake"]
@@ -121,6 +138,9 @@ text(1,0.18, paste0("P = ", formatC(as.double(coef(summary(llfit))[,4][2]), digi
 text(1,0.65, paste0("P = ", formatC(as.double(coef(summary(lsfit))[,4][2]), digits = 3)), col = "blue", cex = 1.2)
 text(1,0.84, paste0("P = ", formatC(as.double(coef(summary(slfit))[,4][2]), digits = 3)), col = "dark green", cex = 1.2)
 text(1,0.9 , paste0("P = ", formatC(as.double(coef(summary(ssfit))[,4][2]), digits = 2)), col = "darkgreen", cex = 1.2)
+
+dev.off()  # Added by RJCB
+
 #-------------------------------------------------------------------------------
 # Start of code using the non-absolute value
 #-------------------------------------------------------------------------------
@@ -139,10 +159,14 @@ for(i in 1:nrow(pre_dat)){
 # Original with abs
 # pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_mean) / pre_dat$cage_mass_stdev
 # New without abs
-  pre_dat$cage_mass_mean_deviation_sd <-    (pre_dat$pre_mass - pre_dat$cage_mass_mean) / pre_dat$cage_mass_stdev
+pre_dat$cage_mass_mean_deviation_sd <-    (pre_dat$pre_mass - pre_dat$cage_mass_mean) / pre_dat$cage_mass_stdev
 
 testthat::expect_equivalent(mean(pre_dat$cage_mass_mean_deviation_sd, na.rm = TRUE), 0.0)
 
+# ADDED: save to file for easier analysis
+readr::write_csv(pre_dat, "data_with_added_cols.csv") # Added by RJCB
+
+png("fig2_reproduced_no_abs.png") # Added by RJCB
 
 par(mar = c(5,5,1,1))
 plot(jitter(survived, 0.2) ~ cage_mass_mean_deviation_sd, pre_dat, pch = 15+as.numeric(transplant), col = 5-as.numeric(origin), ylab = "survival", xlab = "deviation from cage mean body mass",cex.lab = 1.5)
@@ -184,6 +208,8 @@ legend(
   lwd = 3,
   lty = c("solid", "dashed", "dashed", "solid")
 )
+
+dev.off()  # Added by RJCB
 
 # Don't keep these, as these are false
 #text(1,0.18, "P = 0.502", col = "blue", cex = 1.2)
