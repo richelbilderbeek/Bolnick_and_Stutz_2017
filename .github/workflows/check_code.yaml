@@ -33,11 +33,11 @@ jobs:
         shell: Rscript {0}
 
       - name: Remove all figures
-        run: ls *.png
+        run: rm *.png
 
       - name: Run code
         run: Rscript fig2_complete.R
 
-      - name: Remove all reproduced figures
+      - name: Show all reproduced figures
         run: ls *.png
 
