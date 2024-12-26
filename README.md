@@ -31,7 +31,7 @@ Version|Figure 2 version|Description
 -------|---------------------------------------------------|---------------------------------------------------
 A      |![Figure 2, in the paper](figure_2_in_paper.png)   |As in paper
 B      |![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using author's code, see [fig2_complete.R](fig2_complete.R)
-C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real valus, see [fig2_complete.R](fig2_complete.R)
+C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real values, see [fig2_complete.R](fig2_complete.R)
 
 <!-- markdownlint-enable MD013 -->
 
