@@ -10,8 +10,8 @@ normalized body mass:
 Figure 2 version|Description
 ---------------------------------------------------|---------------------------------------------------
 ![Figure 2, in the paper](figure_2_in_paper.png)   |As in paper
-![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using auhor's code
-![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real valus
+![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using auhor's code, see [fig2_complete.R](fig2_complete.R)
+![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real valus, see [fig2_complete.R](fig2_complete.R)
 
 When taking just the relative
 normalized body mass, this pattern breaks down:
