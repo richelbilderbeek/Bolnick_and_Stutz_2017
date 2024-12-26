@@ -1,11 +1,19 @@
 # Bolnick_and_Stutz_2017
 
-Notes for Bolnick, Daniel I., and William E. Stutz. "Frequency dependence limits divergent evolution by favouring rare immigrants over residents." Nature (2017).
+Notes for `[Bolnick & Stutz, 2017]`.
+
+## Claim of the paper
 
 Extreme body sizes fare better, when taking the *absolute* of the relative
 normalized body mass:
 
+![Figure 2, taking the absolute of the relative body size, in the paper](figure_2_in_paper.png)
+
+> Figure 2, taking the absolute of the relative body size, in the paper
+
 ![Figure 2, taking the absolute of the relative body size](fig2.png)
+
+> Figure 2, taking the absolute of the relative body size
 
 When taking just the relative
 normalized body mass, this pattern breaks down:
@@ -38,3 +46,9 @@ With a LOWESS fit: no
 No.
 
 ![](minority_fish_fitnesses.png)
+
+## References
+
+- `[Bolnick & Stutz, 2017]` Bolnick, Daniel I., and William E. Stutz.
+  "Frequency dependence limits divergent evolution by favouring rare
+  immigrants over residents." Nature (2017).
