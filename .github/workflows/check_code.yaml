@@ -27,6 +27,7 @@ jobs:
             remotes::install_cran("testthat")
             remotes::install_cran("readr")
             remotes::install_cran("stringr")
+            remotes::install_cran("ggplot2")
         shell: Rscript {0}
 
       - name: Remove all figures
