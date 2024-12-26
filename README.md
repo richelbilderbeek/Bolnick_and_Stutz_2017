@@ -41,7 +41,7 @@ C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the
 With 95% confidence interval added:
 
 ![Figure 2, taking the relative body size, with confidence intervals](fig2_non_absolute_ggplot.png)
-    
+
 Merge all four treatments:
 
 ![Relation between relative body mass and fitness](fig2_non_absolute_ggplot_all.png)
@@ -52,17 +52,17 @@ Merge all four treatments:
 
 With a parabolic fit: yes
 
-![](pre_mass_survival_1.png)
+![Pre mass survival rate and a parabolic fit](pre_mass_survival_1.png)
 
 With a LOWESS fit: no
 
-![](pre_mass_survival_2.png)
+![Pre mass survival rate and a LOWESS fit](pre_mass_survival_2.png)
 
-# Do minority fish have a higher fitness at the extremes?
+## Do minority fish have a higher fitness at the extremes?
 
 No.
 
-![](minority_fish_fitnesses.png)
+![Fitnesses of fish that are in the minority](minority_fish_fitnesses.png)
 
 ## References
 
