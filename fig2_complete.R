@@ -12,8 +12,8 @@ ggplot2::theme_set(ggplot2::theme_gray(base_size = 22))
 #-------------------------------------------------------------------------------
 # Add history as one value
 calc_history <- function(origin, transplant) {
-  testit::assert(origin == "Stream" || origin == "Lake")
-  testit::assert(transplant == "Stream" || transplant == "Lake")
+  testthat::expect_true(origin == "Stream" || origin == "Lake")
+  testthat::expect_true(transplant == "Stream" || transplant == "Lake")
   from <- ifelse(origin == "Stream", "s", "l")
   to <- ifelse(transplant == "Stream", "s", "l")
   return(paste0(from, to))
@@ -28,18 +28,18 @@ testthat::expect_equal(calc_history("Stream", "Stream"), "ss")
 least_frequent <- function(items) {
   # Debugging
   if (length(items) != 3) { return(NA) }
-  testit::assert(length(items) == 3)
+  testthat::expect_true(length(items) == 3)
   # First is single
   if (items[1] != items[2] && items[1] != items[3]) {
-    testit::assert(items[2] == items[3])
+    testthat::expect_true(items[2] == items[3])
     return(items[1])
   }
   # Second is single
   if (items[2] != items[1] && items[2] != items[3]) {
-    testit::assert(items[1] == items[3])
+    testthat::expect_true(items[1] == items[3])
     return(items[2])
   }
-  testit::assert(items[1] == items[2])
+  testthat::expect_true(items[1] == items[2])
   return(items[3])
 }
 testthat::expect_equal(least_frequent(c("a", "b", "b")), "a")
