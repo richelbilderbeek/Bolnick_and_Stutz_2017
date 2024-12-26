@@ -16,11 +16,16 @@ Instead, the conclusion should be:
 - in the lake: smaller individuals thrive
 - in the stream: bigger individuals thrive.
 
+<!-- markdownlint-disable MD013 --><!-- Tables cannot be split up over lines, hence will break 80 characters per line -->
+
 Version|Figure 2 version|Description
 -------|---------------------------------------------------|---------------------------------------------------
 A      |![Figure 2, in the paper](figure_2_in_paper.png)   |As in paper
 B      |![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using auhor's code, see [fig2_complete.R](fig2_complete.R)
 C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real valus, see [fig2_complete.R](fig2_complete.R)
+
+<!-- markdownlint-enable MD013 -->
+
 
 
 ## Extra figures
@@ -54,3 +59,17 @@ No.
 - `[Bolnick & Stutz, 2017]` Bolnick, Daniel I., and William E. Stutz.
   "Frequency dependence limits divergent evolution by favouring rare
   immigrants over residents." Nature (2017).
+
+## Files used by continuous integration scripts
+
+<!-- markdownlint-disable MD013 --><!-- Tables cannot be split up over lines, hence will break 80 characters per line -->
+
+Filename                                  |Descriptions
+------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------
+[mlc_config.json](mlc_config.json)        |Configuration of the link checker, use `markdown-link-check --config mlc_config.json --quiet docs/**/*.md` to do link checking locally
+[.spellcheck.yml](.spellcheck.yml)        |Configuration of the spell checker, use `pyspelling -c .spellcheck.yml` to do spellcheck locally
+[.wordlist.txt](.wordlist.txt)            |Whitelisted words for the spell checker, use `pyspelling -c .spellcheck.yml` to do spellcheck locally
+[.markdownlint.jsonc](.markdownlint.jsonc)|Configuration of the markdown linter, use `markdownlint "**/*.md"` to do markdown linting locally. The name of this file is a default name.
+[.markdownlintignore](.markdownlintignore)|Files ignored by the markdown linter, use `markdownlint "**/*.md"` to do markdown linting locally. The name of this file is a default name.
+
+<!-- markdownlint-enable MD013 -->
