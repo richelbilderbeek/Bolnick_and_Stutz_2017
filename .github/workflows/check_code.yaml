@@ -1,6 +1,6 @@
 # Check that all code used in the chapters
 # are indeed copy-pasted from the tested working code
-name: Check chapters
+name: Check code
 
 # Check links on the 2nd day of the month.
 # 2nd as the first letter of this repo is the 2nd letter in the alphabet.
@@ -12,7 +12,7 @@ on:
 
 
 jobs:
-  check-links:
+  check-code:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
