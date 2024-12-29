@@ -1,5 +1,4 @@
-# Check that all code used in the chapters
-# are indeed copy-pasted from the tested working code
+# Check that the code works
 name: Check code
 
 # Check links on the 2nd day of the month.
@@ -40,4 +39,3 @@ jobs:
 
       - name: Show all reproduced figures
         run: ls *.png
-
