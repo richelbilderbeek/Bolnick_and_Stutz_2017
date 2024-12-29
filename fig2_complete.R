@@ -67,6 +67,7 @@ if (!file.exists(traits_filename)) {
 
 
 pre_dat <- read.csv(traits_filename, sep = " ")
+
 pre_dat$origin <- as.factor(pre_dat$origin) # RJCB
 pre_dat$transplant <- as.factor(pre_dat$transplant) # RJCB
 
@@ -95,7 +96,7 @@ for(i in 1:nrow(pre_dat)) {
 pre_dat$cage_mass_mean_deviation_sd <- abs(pre_dat$pre_mass - pre_dat$cage_mass_mean)/pre_dat$cage_mass_stdev
 
 # ADDED: save to file for easier analysis
-readr::write_csv(pre_dat, "data_with_abs_added_cols.csv") # Added by RJCB
+readr::write_csv(pre_dat |> dplyr::arrange(enclosure), "data_with_abs_added_cols.csv") # Added by RJCB
 
 png("fig2_reproduced.png") # Added by RJCB
 
@@ -164,7 +165,8 @@ pre_dat$cage_mass_mean_deviation_sd <-    (pre_dat$pre_mass - pre_dat$cage_mass_
 testthat::expect_equivalent(mean(pre_dat$cage_mass_mean_deviation_sd, na.rm = TRUE), 0.0)
 
 # ADDED: save to file for easier analysis
-readr::write_csv(pre_dat, "data_with_added_cols.csv") # Added by RJCB
+readr::write_csv(pre_dat |> dplyr::arrange(enclosure), "data_with_added_cols.csv") # Added by RJCB
+ 
 
 png("fig2_reproduced_no_abs.png") # Added by RJCB
 
