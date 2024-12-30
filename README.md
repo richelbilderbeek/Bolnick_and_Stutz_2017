@@ -23,18 +23,19 @@ flowchart TD
     C
     A --> |reproduced| B
     B --> |using non-absolute values| C  
+    C --> |using a parabolic fit| D
 ```
 
 <!-- markdownlint-disable MD013 --><!-- Tables cannot be split up over lines, hence will break 80 characters per line -->
 
 Version|Figure 2 version|Description
--------|---------------------------------------------------|---------------------------------------------------
-A      |![Figure 2, in the paper](figure_2_in_paper.png)   |As in paper
-B      |![Figure 2, reproduced](fig2_reproduced.png)       |Reproduced using author's code, see [fig2_complete.R](fig2_complete.R)
-C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)|Reproduced using the real values, see [fig2_complete.R](fig2_complete.R)
+-------|-----------------------------------------------------|---------------------------------------------------
+A      |![Figure 2, in the paper](figure_2_in_paper.png)     |As in paper
+B      |![Figure 2, reproduced](fig2_reproduced.png)         |Reproduced using author's code, see [fig2_complete.R](fig2_complete.R)
+C      |![Figure 2, reproduced](fig2_reproduced_no_abs.png)  |Reproduced using the real values, see [fig2_complete.R](fig2_complete.R)
+D      |![Figure 2, reproduced](fig2_non_absolute_ggplot.png)|Reproduced using the real values and a parabolic fit, see [fig2_complete.R](fig2_complete.R)
 
 <!-- markdownlint-enable MD013 -->
-
 
 ## Extra figures
 
